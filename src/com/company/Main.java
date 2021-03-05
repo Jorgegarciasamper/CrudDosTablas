@@ -19,13 +19,16 @@ import java.util.Date;
 public class Main {
     private static DataBase db;
     public static void main(String[] args) throws DAOException {
-
+        db = new ClientDB();
         String password = "000000";//l.22, l23, l24 singleton
         String usuario = "postgres";
-        ClientDB.initialise(usuario,password);
+        db.initialise(usuario,password);
 
-        db = new ClientDB();
-        Connection con = db.getConnection();
+
+
+        System.out.println(db.getConnection());
+        //DataBase.initialise(usuario,password);
+        //Connection con = db.getConnection();
         //Patron creacionales Factory Method
         Author author = new Author("man", "do",ParseDate("01/02/1990"),ParseDate("01/04/2020"),"Femenino","españa","todos","none");
 
@@ -36,22 +39,22 @@ public class Main {
         controller.createAuthor(author);
         //System.out.println(author.getCodautor());
 
-        author.setCodautor(114);
-        controller.deleteAuthor(author);
+        //author.setCodautor(114);
+        //controller.deleteAuthor(author);
 
         //editar un autor por medio del cod autor
-        author.setCodautor(114);
-        author.setNombre("lenovo");
-        author.setApellidos("pepa");
-        author.setGenero("masculino");
-        controller.updateAuthor(author);
+        //author.setCodautor(114);
+        //author.setNombre("lenovo");
+        //author.setApellidos("pepa");
+        //author.setGenero("masculino");
+        //controller.updateAuthor(author);
 
-        db.Close(con);
+        db.Close();
 
 
 
-       //AuthorDAOFactory factoria = new AuthorDAOFactory();
-       //AuthorDAO product = factoria.createAuthorDAO();
+        //AuthorDAOFactory factoria = new AuthorDAOFactory();
+        //AuthorDAO product = factoria.createAuthorDAO();
 
         //Author author = new Author("Miriam", "Lagratjola",ParseDate("01/02/1990"),ParseDate("01/04/2020"),"Femenino","españa","todos","none");
 
@@ -89,14 +92,14 @@ public class Main {
 
 
 
-       //System.out.println(author.getCodautor()); //el id es 0 solo cuando se mete en la bd se le asigna un id
-       //controller.deleteAuthor(author);//no borra el author que se le mete ahora borra una author por id
-       //if (!controller.updateAuthor(author))
-       //{
-       //    System.out.println(author + " No existe");
-       //}
+        //System.out.println(author.getCodautor()); //el id es 0 solo cuando se mete en la bd se le asigna un id
+        //controller.deleteAuthor(author);//no borra el author que se le mete ahora borra una author por id
+        //if (!controller.updateAuthor(author))
+        //{
+        //    System.out.println(author + " No existe");
+        //}
 
-       //Asi  es como se le provoca el error
+        //Asi  es como se le provoca el error
         //controller.createAuthor(author);
         //author.setCodautor(80);
         //controller.deleteAuthor(author);//no borra el author que se le mete ahora borra una author por id
@@ -135,7 +138,7 @@ public class Main {
         //https://www.ecodeup.com/crud-java-manual-completo/
     }
 
-//** Pasa de String a date
+    //** Pasa de String a date
     public static Date ParseDate(String fecha)
     {
         SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
@@ -152,17 +155,17 @@ public class Main {
         java.sql.Date sqlStartDate = new java.sql.Date(fechaDate.getTime());
         return sqlStartDate;
     }
- //** Pasa de Date de until a date de SQL
- public static java.sql.Date convertStringToSQLDate(String strDate) {
-     java.sql.Date fecha = null;
-     try {
-         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-         Date parsed = format.parse(strDate);
-         fecha = new java.sql.Date(parsed.getTime());
-     } catch (ParseException e) {
-         System.out.println("Exception :" + e);
-     }
-     return fecha;
- }
+    //** Pasa de Date de until a date de SQL
+    public static java.sql.Date convertStringToSQLDate(String strDate) {
+        java.sql.Date fecha = null;
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+            Date parsed = format.parse(strDate);
+            fecha = new java.sql.Date(parsed.getTime());
+        } catch (ParseException e) {
+            System.out.println("Exception :" + e);
+        }
+        return fecha;
+    }
 
 }

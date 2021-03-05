@@ -65,7 +65,7 @@ public class ConnectBD {
     //    }
     //    return con;
     //}
-    
+
     /**
      //     * Establecemos la conexión con la base de datos <b>libreriasperez</b>.
      //     */

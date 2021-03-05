@@ -26,8 +26,8 @@ public class AuthorDAOImpl implements AuthorDAO {
             "WHERE codautor = ?;";
     String DELETE = " DELETE FROM autor WHERE codautor = ?;";
     /**
-    * Methods
-    * */
+     * Methods
+     * */
     //private Connection con = null;
     DataBase clienDB = new ClientDB();
     // package level access
@@ -51,20 +51,20 @@ public class AuthorDAOImpl implements AuthorDAO {
         //Connection connection = ConnectBD.Connect();
         //Connection con=clienDB.getConnection();
         try {
-                PreparedStatement psInsert = clienDB.createStatement(INSERT);
-                //psInsert = connection.prepareStatement(INSERT);
-                psInsert.setString(1, author.getNombre());
-                psInsert.setString(2, author.getApellidos());
-                psInsert.setDate(3, (Date) author.getFechan());
-                psInsert.setDate(4, (Date) author.getFechaf());
-                psInsert.setString(5, author.getGenero());
-                psInsert.setString(6, author.getPaisorigen());
-                psInsert.setString(7, author.getEstudios());
-                psInsert.setString(8, author.getObservaciones());
-                psInsert.executeUpdate();
-                //connection.commit();
-                clienDB.Commit();
-                //con.commit();
+            PreparedStatement psInsert = clienDB.createStatement(INSERT);
+            //psInsert = connection.prepareStatement(INSERT);
+            psInsert.setString(1, author.getNombre());
+            psInsert.setString(2, author.getApellidos());
+            psInsert.setDate(3, (Date) author.getFechan());
+            psInsert.setDate(4, (Date) author.getFechaf());
+            psInsert.setString(5, author.getGenero());
+            psInsert.setString(6, author.getPaisorigen());
+            psInsert.setString(7, author.getEstudios());
+            psInsert.setString(8, author.getObservaciones());
+            psInsert.executeUpdate();
+            //connection.commit();
+            clienDB.Commit();
+            //con.commit();
 
         } catch (SQLException e) {
             //dispathRollback(connection);
@@ -110,8 +110,8 @@ public class AuthorDAOImpl implements AuthorDAO {
             throw new DAOException(ERROR_TRANSACTION+ " " + this.getClass().getSimpleName() + " " ,"Metodo create",e);
             //throw  new DAOException("Error: %s, %s%n", this.getClass().getSimpleName(), "Create");
         }
-         finally {
-        //    closeConection(psRead);
+        finally {
+            //    closeConection(psRead);
             //clienDB.Close(con);
         }
         return listaautor;
@@ -164,16 +164,16 @@ public class AuthorDAOImpl implements AuthorDAO {
             }else {
                 System.out.println("El author no existe!!");
             }
-            } catch (SQLException e) {
-                //dispathRollback(connection);
-                //dispathRollback(con);
-                clienDB.RollBlack();
-                throw new DAOException(ERROR_TRANSACTION+ " " + this.getClass().getSimpleName() + " " ,"Metodo Update",e);
-                //throw  new DAOException("Error: %s, %s%n", this.getClass().getSimpleName(), "Create");
-            } finally {
-                //closeConection(psUpdate);
-                //clienDB.Close(con);
-            }
+        } catch (SQLException e) {
+            //dispathRollback(connection);
+            //dispathRollback(con);
+            clienDB.RollBlack();
+            throw new DAOException(ERROR_TRANSACTION+ " " + this.getClass().getSimpleName() + " " ,"Metodo Update",e);
+            //throw  new DAOException("Error: %s, %s%n", this.getClass().getSimpleName(), "Create");
+        } finally {
+            //closeConection(psUpdate);
+            //clienDB.Close(con);
+        }
 
 
         return updated;
