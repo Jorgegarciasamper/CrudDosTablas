@@ -19,17 +19,32 @@ import java.util.Date;
 public class Main {
     private static DataBase db;
     public static void main(String[] args) throws DAOException {
+
+        String password = "000000";//l.22, l23, l24 singleton
+        String usuario = "postgres";
+        ClientDB.initialise(usuario,password);
+
         db = new ClientDB();
         Connection con = db.getConnection();
-
-        Author author = new Author("manolo", "Lagratjola",ParseDate("01/02/1990"),ParseDate("01/04/2020"),"Femenino","españa","todos","none");
+        //Patron creacionales Factory Method
+        Author author = new Author("man", "do",ParseDate("01/02/1990"),ParseDate("01/04/2020"),"Femenino","españa","todos","none");
 
         // controlador
         ControllerAutor controller = new ControllerAutor();
 
         //guarda un autor a través del controlador
         controller.createAuthor(author);
+        //System.out.println(author.getCodautor());
 
+        author.setCodautor(114);
+        controller.deleteAuthor(author);
+
+        //editar un autor por medio del cod autor
+        author.setCodautor(114);
+        author.setNombre("lenovo");
+        author.setApellidos("pepa");
+        author.setGenero("masculino");
+        controller.updateAuthor(author);
 
         db.Close(con);
 
@@ -40,8 +55,7 @@ public class Main {
 
         //Author author = new Author("Miriam", "Lagratjola",ParseDate("01/02/1990"),ParseDate("01/04/2020"),"Femenino","españa","todos","none");
 
-        //String password = "000000";
-        //String usuario = "postgres";
+
         boolean updated;
 
 

@@ -6,26 +6,45 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class ClientDB implements DataBase{
-    Connection con;
+    private static Connection con;
 //Aqui podriamos tener metodos de prepared statement genericos
+    public static synchronized void initialise(String user, String password){
+        if (con != null) {
+            String url = "jdbc:postgresql://localhost:5432/libreriasPerez?useServerPrepStmts=true";
+            try {
+                Class.forName("org.postgresql.Driver");
+                con = DriverManager.getConnection(url, user, password);
+                con.setAutoCommit(false);
+
+            } catch (SQLException e) {
+                System.out.println("No se pudo conectar a la base de datos");
+                e.printStackTrace();
+            } catch (ClassNotFoundException ex) {
+                System.out.println("Error al registrar el driver de PostgreSQL: " + ex);
+            }
+        }
+    }
     @Override
     public Connection getConnection() {
-        String password = "000000";
-        String user = "postgres";
-        String url = "jdbc:postgresql://localhost:5432/libreriasPerez?useServerPrepStmts=true";
 
-        //Connection con = null;
-        try {
-            Class.forName("org.postgresql.Driver");
-            con = DriverManager.getConnection(url, user, password);
-            con.setAutoCommit(false);
+    //    if (con==null) {//the  if zone l.14 and l.
+    //        String password = "000000";
+    //        String user = "postgres";
+    //        String url = "jdbc:postgresql://localhost:5432/libreriasPerez?useServerPrepStmts=true";
 
-        } catch (SQLException e) {
-            System.out.println("No se pudo conectar a la base de datos");
-            e.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            System.out.println("Error al registrar el driver de PostgreSQL: " + ex);
-        }
+            //Connection con = null;
+   //        try {
+   //            Class.forName("org.postgresql.Driver");
+   //            con = DriverManager.getConnection(url, user, password);
+   //            con.setAutoCommit(false);
+
+   //        } catch (SQLException e) {
+   //            System.out.println("No se pudo conectar a la base de datos");
+   //            e.printStackTrace();
+   //        } catch (ClassNotFoundException ex) {
+   //            System.out.println("Error al registrar el driver de PostgreSQL: " + ex);
+   //        }
+   //    }
         return con;
     }
 

@@ -49,7 +49,7 @@ public class AuthorDAOImpl implements AuthorDAO {
     @Override
     public void create(Author author) throws DAOException {
         //Connection connection = ConnectBD.Connect();
-        Connection con=clienDB.getConnection();
+        //Connection con=clienDB.getConnection();
         try {
                 PreparedStatement psInsert = clienDB.createStatement(INSERT);
                 //psInsert = connection.prepareStatement(INSERT);
@@ -74,12 +74,12 @@ public class AuthorDAOImpl implements AuthorDAO {
             //throw  new DAOException("Error: %s, %s%n", this.getClass().getSimpleName(), "Create");
         } finally {
             //closeConection(psInsert);
-            clienDB.Close(con);
+            //clienDB.Close(con);
         }
     }
     @Override
     public List<Author> read() throws DAOException{
-        Connection con=clienDB.getConnection();
+        //Connection con=clienDB.getConnection();
         //PreparedStatement psRead = null;
         ResultSet rs = null;
         //Connection connection = ConnectBD.Connect();
@@ -101,33 +101,38 @@ public class AuthorDAOImpl implements AuthorDAO {
                 c.setObservaciones(rs.getString(9));
                 listaautor.add(c);
             }
+            //Vuelve a leer de data base
+            rs.refreshRow();
         } catch (SQLException e) {
             //dispathRollback(connection);
             //dispathRollback(con);
             clienDB.RollBlack();
             throw new DAOException(ERROR_TRANSACTION+ " " + this.getClass().getSimpleName() + " " ,"Metodo create",e);
             //throw  new DAOException("Error: %s, %s%n", this.getClass().getSimpleName(), "Create");
-        }// finally {
+        }
+         finally {
         //    closeConection(psRead);
-        //}
+            //clienDB.Close(con);
+        }
         return listaautor;
     }
 
     @Override
     public boolean update(Author author) throws DAOException {
-        Connection con=clienDB.getConnection();
+        //Connection con=clienDB.getConnection();
         //Connection connection = ConnectBD.Connect();
         //PreparedStatement psUpdate = null;;
         boolean updated=false;
-
-        //try (PreparedStatement psUpdate = con.prepareStatement(UPDATE)){
-        try{
-            PreparedStatement psUpdate = clienDB.createStatement(UPDATE);
-            //if(!buscarAuthorById(author.getCodautor()))
-            //{
-            //    throw new DAOException(ERROR_TRANSACTION+ " " + this.getClass().getSimpleName() + " " ," El author ya no existe");
-            //}
-            //else {//si aun existe se modifica
+        try {
+            if(buscarAuthorById(author.getCodautor()))
+            //try (PreparedStatement psUpdate = con.prepareStatement(UPDATE)){
+            {
+                PreparedStatement psUpdate = clienDB.createStatement(UPDATE);
+                //if(!buscarAuthorById(author.getCodautor()))
+                //{
+                //    throw new DAOException(ERROR_TRANSACTION+ " " + this.getClass().getSimpleName() + " " ," El author ya no existe");
+                //}
+                //else {//si aun existe se modifica
                 //psUpdate = connection.prepareStatement(UPDATE);
                 psUpdate.setString(1, author.getNombre());
                 psUpdate.setString(2, author.getApellidos());
@@ -139,31 +144,48 @@ public class AuthorDAOImpl implements AuthorDAO {
                 psUpdate.setString(8, author.getObservaciones());
                 psUpdate.setInt(9, author.getCodautor());//Va en orden de como se tiene la query
                 updated = psUpdate.executeUpdate() > 0;
+
+                //Opcion A
+                //ResultSet resultSet = psUpdate.executeQuery(SELECT);
+                //int concurrency = resultSet.getConcurrency();
+                //if (concurrency == ResultSet.CONCUR_UPDATABLE) {
+                //    System.out.println("El resultado se ha actualizado");
+                //}
+                //else {
+                //    System.out.println("El resultado no se ha actualizado");
+                //}
+
                 //if (psUpdate.executeUpdate() != 1) {
-                //    throw new SQLException("Error updating department");
+                //    throw new SQLException("Error updating author");
                 //}
                 //connection.commit();
                 //con.commit();
-            clienDB.Commit();
-        } catch (SQLException e) {
-            //dispathRollback(connection);
-            //dispathRollback(con);
-            clienDB.RollBlack();
-            throw new DAOException(ERROR_TRANSACTION+ " " + this.getClass().getSimpleName() + " " ,"Metodo create",e);
-            //throw  new DAOException("Error: %s, %s%n", this.getClass().getSimpleName(), "Create");
-        } finally {
-            //closeConection(psUpdate);
-            clienDB.Close(con);
-        }
+                clienDB.Commit();
+            }else {
+                System.out.println("El author no existe!!");
+            }
+            } catch (SQLException e) {
+                //dispathRollback(connection);
+                //dispathRollback(con);
+                clienDB.RollBlack();
+                throw new DAOException(ERROR_TRANSACTION+ " " + this.getClass().getSimpleName() + " " ,"Metodo Update",e);
+                //throw  new DAOException("Error: %s, %s%n", this.getClass().getSimpleName(), "Create");
+            } finally {
+                //closeConection(psUpdate);
+                //clienDB.Close(con);
+            }
+
+
         return updated;
     }
 
     @Override
     public void delete(Author author) throws DAOException {
-        Connection con=clienDB.getConnection();
+        //Connection con=clienDB.getConnection();
         //Connection connection = ConnectBD.Connect();
         //PreparedStatement psDelete = null;
-        try (PreparedStatement psDelete = con.prepareStatement(DELETE)) {
+        try (PreparedStatement psDelete = clienDB.createStatement(DELETE)) {
+
             //psDelete = connection.prepareStatement(DELETE);
             psDelete.setInt(1, author.getCodautor());
             psDelete.executeUpdate();
@@ -172,12 +194,12 @@ public class AuthorDAOImpl implements AuthorDAO {
             clienDB.Commit();
         } catch (SQLException e) {
             //dispathRollback(connection);
-            dispathRollback(con);
+            //dispathRollback(con);
             throw new DAOException(ERROR_TRANSACTION+ " " + this.getClass().getSimpleName() + " " ,"Metodo Delete",e);
             //throw  new DAOException("Error: %s, %s%n", this.getClass().getSimpleName(), "Update");
         } finally {
             //Opcion A
-            clienDB.Close(con);
+            //clienDB.Close(con);
             //Opcion B
             //closeConection(con); //si descomentar tb descomentar l.179 a l.186
 
@@ -203,13 +225,9 @@ public class AuthorDAOImpl implements AuthorDAO {
 
     public boolean buscarAuthorById(int codAuthor) throws SQLException {
         boolean existe=false;
-
-        PreparedStatement psRead = null;
-        ResultSet rs = null;
-        Connection connection = ConnectBD.Connect();
-
-        psRead = connection.prepareStatement(SELECT);
-        rs = psRead.executeQuery();
+        Connection con=clienDB.getConnection();
+        PreparedStatement ps = con.prepareStatement(SELECT);
+        ResultSet rs = ps.executeQuery();
         while (rs.next()) {
             if(rs.getInt(1)==codAuthor){
                 existe = true;
